@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Teacher's Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <div class="header">
+        <h1>Teacher's Dashboard</h1>
+    </div>
+
+    <div class="content">
+        <div class="student-list">
+            <h2>Student List</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for students...">
+            </div>
+            <ul id="studentList">
+                <!-- Student names will be populated here -->
+            </ul>
+             <button id="deleteButton">Delete Selected Students</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button" id="videoTabButton" onclick="switchTab('video')">Video</button>
+            <button class="tab-button" id="screenshotTabButton" onclick="switchTab('screenshot')">Screenshot</button>
+        </div>
+
+        <div id="videoTab" class="tab-content">
+            <div class="video-content">
+                <video id="studentVideo" controls>
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <div id="screenshotTab" class="tab-content">
+            <div id="screenshotContainer" class="screenshot-container">
+                <!-- Screenshot images will be populated here -->
+            </div>
+        </div>
+
+        <div class="student-details">
+            <h2 id="studentName">Student Name</h2>
+
+            <!-- Provide a link to download the log file if available -->
+            <a id="logFileLink" href="" download>Download Log File</a>
+
+            <!-- Display a message if the folder is empty -->
+            <p id="emptyFolderMessage" style="display: none;">The folder is empty.</p>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.1/firebase-storage-compat.js"></script>
+    <script src="dash.js"></script>
+</body>
+
+</html>

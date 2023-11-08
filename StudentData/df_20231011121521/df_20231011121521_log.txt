@@ -1,0 +1,55 @@
+2023-10-11 12:15:21 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:22 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:23 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:24 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:24 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:25 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:26 - Looked away from the screen for 4.27 seconds
+2023-10-11 12:15:26 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:27 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:28 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:29 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:29 - Looked away from the screen for 3.06 seconds
+2023-10-11 12:15:30 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:31 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:32 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:33 - Looked away from the screen for 3.02 seconds
+2023-10-11 12:15:33 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:34 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:35 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:36 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:37 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:38 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:38 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:39 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:40 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:40 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:41 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:42 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:43 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:44 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:45 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:46 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:46 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:47 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:47 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:48 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:48 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:49 - Looked away from the screen for 13.88 seconds
+2023-10-11 12:15:49 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:49 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:51 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:52 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:53 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:53 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:54 - Unusual application accessed: Gaze Tracking
+2023-10-11 12:15:54 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:54 - Looked away from the screen for 4.45 seconds
+2023-10-11 12:15:55 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:55 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:56 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:56 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:57 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:57 - Unusual mouse activity detected outside the browser.
+2023-10-11 12:15:58 - Unusual application accessed: MotionDetection – data.py
+2023-10-11 12:15:58 - Unusual mouse activity detected outside the browser.

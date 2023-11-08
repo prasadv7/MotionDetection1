@@ -1,0 +1,213 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.header {
+    background-color: #2d4059;
+    color: #f6f6f6;
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Aligns content vertically */
+    align-items: center;
+    top: 100px;/* Centers content horizontally */
+    width: 100%;
+    position: absolute;
+    top:0px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+.content {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.student-list {
+    border-right: 1px solid #eee;
+    padding-right: 20px;
+}
+
+.student-list h2 {
+    margin-top: 0;
+    color: #2d4059;
+    font-size: 24px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background-color: #2d4059;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.tab-button.active {
+    background-color: #1e293b;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.student-details {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Video Styles */
+.video-content {
+    margin-bottom: 20px;
+}
+
+#studentVideo {
+    width: 100%;
+}
+
+/* Screenshot Styles */
+#screenshotContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.screenshot {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border: 2px solid #eee;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.screenshot:hover {
+    transform: scale(1.05);
+}
+
+/* Search Input Styles */
+.search-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+input[type="text"] {
+    width: 300px;
+    padding: 12px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+input[type="text"]:focus {
+    border-color: #4e7bb9;
+    box-shadow: 0 0 8px rgba(0, 0, 255, 0.3);
+}
+
+input[type='checkbox'] {
+    margin-right: 10px;
+}
+
+/* Delete Button Styles */
+.student-list {
+    position: relative;
+}
+
+#deleteButton {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#deleteButton:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+/* Login Page Styles */
+.login-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.input-container {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2d4059;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #2d4059;
+    box-shadow: 0 0 10px rgba(45, 64, 89, 0.1);
+}
+
+button {
+    background: #2d4059;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background: #1e293b;
+}
