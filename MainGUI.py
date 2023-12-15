@@ -1,3 +1,5 @@
+from logging import root
+
 import cv2
 import dlib
 import numpy as np
@@ -8,17 +10,16 @@ import threading
 import win32gui
 import os
 import datetime
-
-
-from plyer import notification
-import sys
-from firebase_admin import storage, credentials, initialize_app
 from firebase_admin import storage, credentials, initialize_app, firestore
+from tkinter import Tk, Label, Entry, Button, messagebox
+
 # Initialize the face detector, facial landmark predictor, and a Dlib model for gaze tracking
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("C:\\Users\\Prasad\\Desktop\\shape_predictor_68_face_landmarks.dat")
 model = dlib.face_recognition_model_v1("C:\\Users\\Prasad\\Desktop\\dlib_face_recognition_resnet_model_v1.dat")
+
 cred = credentials.Certificate("C:\\Users\\Prasad\\Desktop\\motiondetection-371f1-firebase-adminsdk-5hgd8-1c10880242.json")
+screenshot_path = "C:\\Users\\Prasad\\Desktop\\StudentData\\"
 
 # Initialize the Firebase app with your credentials and specify the storage bucket
 initialize_app(cred, {'storageBucket': 'motiondetection-371f1.appspot.com'})
@@ -27,6 +28,7 @@ initialize_app(cred, {'storageBucket': 'motiondetection-371f1.appspot.com'})
 looking_away = False
 start_time = None
 db = firestore.client()
+
 # Initialize variables for activity monitoring
 keystroke_count = 0
 mouse_movement_count = 0
@@ -41,116 +43,48 @@ frame_height = int(cap.get(4))
 # Define the size of the video feed window
 video_feed_width = 320
 video_feed_height = 240
-# Path to save screenshots and video
-screenshot_path = "C:\\Users\\Prasad\\Desktop\\StudentData\\"
-
-# Prompt for student name
-student_name = input("Enter Your Name: ")
-student_email = input("Enter the Email: ")
-
-# Create a folder for the student with timestamp if it doesn't exist
-timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-student_folder = os.path.join(screenshot_path, f"{student_name}_{timestamp}")
-os.makedirs(student_folder, exist_ok=True)
 
 cv2.namedWindow("Video Feed", cv2.WINDOW_NORMAL)
 cv2.moveWindow("Video Feed", frame_width - video_feed_width, frame_height - video_feed_height)
 
-# Define the video file name and codec
-video_filename = os.path.join(student_folder, f"{student_name}_{timestamp}_video.avi")
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-w, h = int(cap.get(3)), int(cap.get(4))
-video_writer = cv2.VideoWriter(video_filename, fourcc, 20.0, (w, h))
+# Global variables for student information
+student_name = ""
+student_email = ""
+student_folder = ""
+timestamp = ""
 
-# Create a log file for the student
-log_file_path = os.path.join(student_folder, f"{student_name}_{timestamp}_log.txt")
+def get_student_info():
+    global student_name, student_email, student_folder, timestamp, local_folder_path
+    student_name = name_entry.get()
+    student_email = email_entry.get()
 
-def show_notification(title, message):
-    notification.notify(
-        title=title,
-        message=message,
-        app_icon=None,  # e.g., 'C:\\icon_32x32.ico'
-        timeout=10,  # seconds
-    )
-def on_key_release(key):
-    global keystroke_count
-    keystroke_count += 1
+    if not student_name or not student_email:
+        Tk().withdraw()
+        messagebox.showwarning("Warning", "Please enter both name and email.")
+        return
 
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    student_folder = os.path.join(screenshot_path, f"{student_name}_{timestamp}")
+    os.makedirs(student_folder, exist_ok=True)
 
-def on_move(x, y):
-    global mouse_movement_count
-    mouse_movement_count += 1
-def check_browser_activity():
-    global keystroke_count, mouse_movement_count
-    while True:
-        active_window_title = get_active_window_title()
-        if active_window_title != browser_title:
-            event = f"Unusual application accessed: {active_window_title}"
-            print(event)
-            show_notification("Unusual application accessed","Please Go back on your exam page")
-            with open(log_file_path, "a") as log_file:
-                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                log_file.write(f"{timestamp} - {event}\n")
+    # Define the video file name and codec
+    video_filename = os.path.join(student_folder, f"{student_name}_{timestamp}_video.avi")
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    w, h = int(cap.get(3)), int(cap.get(4))
+    video_writer = cv2.VideoWriter(video_filename, fourcc, 20.0, (w, h))
 
-        if active_window_title != browser_title:
-            if keystroke_count > activity_threshold:
-                event = "Unusual keyboard activity detected outside the browser."
-                print(event)
-                show_notification("Unusual keyboard activity detected outside the browser", "Please Go back on your exam page")
+    # Create a log file for the student
+    log_file_path = os.path.join(student_folder, f"{student_name}_{timestamp}_log.txt")
 
-                with open(log_file_path, "a") as log_file:
-                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    log_file.write(f"{timestamp} - {event}\n")
-                keystroke_count = 0
-            if mouse_movement_count > activity_threshold:
-                event = "Unusual mouse activity detected outside the browser."
-                print(event)
+    # Close the Tkinter window after collecting student information
+    root.destroy()
 
-                with open(log_file_path, "a") as log_file:
-                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    log_file.write(f"{timestamp} - {event}\n")
-                mouse_movement_count = 0
+start_button = Button(root, text="Start Exam", command=get_student_info)
+start_button.pack(pady=10)
 
-        time.sleep(1)  # Reduce the polling frequency
+# Start the Tkinter main loop
+root.mainloop()
 
-# Define a function to capture screenshots
-def capture_screenshot():
-    while True:
-        active_window_title = get_active_window_title()
-        if active_window_title != browser_title:
-            print(f"Unusual application accessed: {active_window_title}")
-            show_notification("Unusual application accessed",
-                              "Please Go back on your exam page")
-
-            sanitized_title = "".join([c for c in active_window_title if c.isalnum() or c in (' ', '-', '_')])
-            file_path = os.path.join(student_folder, f"{sanitized_title}.png")
-            screenshot = ImageGrab.grab()
-            screenshot.save(file_path)
-        time.sleep(1)  # Reduce the polling frequency
-
-# ... (The rest of your code for gaze tracking and webcam capture)
-def get_active_window_title():
-    active_window = win32gui.GetForegroundWindow()
-    window_title = win32gui.GetWindowText(active_window)
-    return window_title
-# Initialize the listener for mouse and keyboard events
-keyboard_listener = keyboard.Listener(on_release=on_key_release)
-mouse_listener = mouse.Listener(on_move=on_move)
-
-# Initialize threads for browser activity and screenshot capture
-activity_thread = threading.Thread(target=check_browser_activity)
-screenshot_thread = threading.Thread(target=capture_screenshot)
-
-# Start the activity and screenshot threads
-activity_thread.daemon = True
-screenshot_thread.daemon = True
-
-keyboard_listener.start()
-mouse_listener.start()
-activity_thread.start()
-screenshot_thread.start()
-
-exit_flag = False  # Initialize the exit flag
 def upload_files_to_firebase(local_path, bucket, student_name):
     start_time = time.time()
     file_count = 0
@@ -200,6 +134,78 @@ def create_student_record(student_name, student_folder):
     # Create the Firestore record for the student
     students_ref = db.collection('students')
     students_ref.add(student_data)
+
+def on_key_release(key):
+    global keystroke_count
+    keystroke_count += 1
+
+def on_move(x, y):
+    global mouse_movement_count
+    mouse_movement_count += 1
+
+def check_browser_activity():
+    global keystroke_count, mouse_movement_count
+    while True:
+        active_window_title = get_active_window_title()
+        if active_window_title != browser_title:
+            event = f"Unusual application accessed: {active_window_title}"
+            print(event)
+            with open(log_file_path, "a") as log_file:
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                log_file.write(f"{timestamp} - {event}\n")
+
+        if active_window_title != browser_title:
+            if keystroke_count > activity_threshold:
+                event = "Unusual keyboard activity detected outside the browser."
+                print(event)
+                with open(log_file_path, "a") as log_file:
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    log_file.write(f"{timestamp} - {event}\n")
+                keystroke_count = 0
+            if mouse_movement_count > activity_threshold:
+                event = "Unusual mouse activity detected outside the browser."
+                print(event)
+                with open(log_file_path, "a") as log_file:
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    log_file.write(f"{timestamp} - {event}\n")
+                mouse_movement_count = 0
+
+        time.sleep(1)  # Reduce the polling frequency
+
+def capture_screenshot():
+    while True:
+        active_window_title = get_active_window_title()
+        if active_window_title != browser_title:
+            print(f"Unusual application accessed: {active_window_title}")
+            sanitized_title = "".join([c for c in active_window_title if c.isalnum() or c in (' ', '-', '_')])
+            file_path = os.path.join(student_folder, f"{sanitized_title}.png")
+            screenshot = ImageGrab.grab()
+            screenshot.save(file_path)
+        time.sleep(1)  # Reduce the polling frequency
+
+def get_active_window_title():
+    active_window = win32gui.GetForegroundWindow()
+    window_title = win32gui.GetWindowText(active_window)
+    return window_title
+
+# Initialize the listener for mouse and keyboard events
+keyboard_listener = keyboard.Listener(on_release=on_key_release)
+mouse_listener = mouse.Listener(on_move=on_move)
+
+# Initialize threads for browser activity and screenshot capture
+activity_thread = threading.Thread(target=check_browser_activity)
+screenshot_thread = threading.Thread(target=capture_screenshot)
+
+# Start the activity and screenshot threads
+activity_thread.daemon = True
+screenshot_thread.daemon = True
+
+keyboard_listener.start()
+mouse_listener.start()
+activity_thread.start()
+screenshot_thread.start()
+
+exit_flag = False  # Initialize the exit flag
 
 # Register a listener for Ctrl+C or q to safely exit
 def on_key_press(key):
@@ -251,7 +257,6 @@ while True:
                     if duration >= 3:
                         event = f"Looked away from the screen for {duration:.2f} seconds"
                         print(event)
-                        show_notification("You Looked away", "")
                         looking_away = False
                         with open(log_file_path, "a") as log_file:
                             timestamp = datetime.datetime.now().strftime("%Y-%M-%d %H:%M:%S")
@@ -262,6 +267,7 @@ while True:
 
                         # Add the frame to the video
                         video_writer.write(frame)
+
     video_frame = cv2.resize(frame, (video_feed_width, video_feed_height))
 
     # Display the video feed in the window
@@ -269,7 +275,6 @@ while True:
 
     # Write the video frame to the output video file
     video_writer.write(video_frame)
-
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         exit_flag = True
@@ -279,10 +284,10 @@ video_writer.release()
 
 cap.release()
 cv2.destroyAllWindows()
-if __name__ == "__main__":
-    # Set the path to the folder created during the program
-    local_folder_path = student_folder
 
-    bucket = storage.bucket()
-    upload_files_to_firebase(local_folder_path, bucket, student_name)
-    create_student_record(student_name, student_folder)
+# Set the path to the folder created during the program
+local_folder_path = student_folder
+
+bucket = storage.bucket()
+upload_files_to_firebase(local_folder_path, bucket, student_name)
+create_student_record(student_name, student_folder)
