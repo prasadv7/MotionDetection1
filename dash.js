@@ -42,8 +42,6 @@ function displayStudentData(studentId) {
                 screenshotContainer.removeChild(screenshotContainer.firstChild);
             }
             if (studentData.video_url) {
-                console.log("Video URL:", studentData.video_url);
-
                 studentVideo.src = studentData.video_url;
                 studentVideo.style.display = 'block'; // Show the video player
             } else {
