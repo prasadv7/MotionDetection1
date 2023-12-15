@@ -30,6 +30,7 @@ function displayStudentData(studentId) {
         const studentDetails = document.getElementById("studentDetails");
         const screenshotContainer = document.getElementById("screenshotContainer");
         const logFileLink = document.getElementById("logFileLink");
+        const studentVideo = document.getElementById("studentVideo");
 
         if (doc.exists) {
             const studentData = doc.data();
@@ -40,6 +41,15 @@ function displayStudentData(studentId) {
             while (screenshotContainer.firstChild) {
                 screenshotContainer.removeChild(screenshotContainer.firstChild);
             }
+            if (studentData.video_url) {
+                console.log("Video URL:", studentData.video_url);
+
+                studentVideo.src = studentData.video_url;
+                studentVideo.style.display = 'block'; // Show the video player
+            } else {
+                studentVideo.style.display = 'none'; // Hide the video player if no video URL
+            }
+
 
             if (studentData.screenshot_urls && studentData.screenshot_urls.length > 0) {
                 studentData.screenshot_urls.forEach(screenshotUrl => {

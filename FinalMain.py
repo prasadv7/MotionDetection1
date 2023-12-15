@@ -8,12 +8,9 @@ import threading
 import win32gui
 import os
 import datetime
-
-
 from plyer import notification
-import sys
-from firebase_admin import storage, credentials, initialize_app
 from firebase_admin import storage, credentials, initialize_app, firestore
+
 # Initialize the face detector, facial landmark predictor, and a Dlib model for gaze tracking
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("C:\\Users\\Prasad\\Desktop\\shape_predictor_68_face_landmarks.dat")
@@ -27,6 +24,7 @@ initialize_app(cred, {'storageBucket': 'motiondetection-371f1.appspot.com'})
 looking_away = False
 start_time = None
 db = firestore.client()
+
 # Initialize variables for activity monitoring
 keystroke_count = 0
 mouse_movement_count = 0
@@ -41,6 +39,7 @@ frame_height = int(cap.get(4))
 # Define the size of the video feed window
 video_feed_width = 320
 video_feed_height = 240
+
 # Path to save screenshots and video
 screenshot_path = "C:\\Users\\Prasad\\Desktop\\StudentData\\"
 
@@ -57,13 +56,13 @@ cv2.namedWindow("Video Feed", cv2.WINDOW_NORMAL)
 cv2.moveWindow("Video Feed", frame_width - video_feed_width, frame_height - video_feed_height)
 
 # Define the video file name and codec
-video_filename = os.path.join(student_folder, f"{student_name}_{timestamp}_video.avi")
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-w, h = int(cap.get(3)), int(cap.get(4))
-video_writer = cv2.VideoWriter(video_filename, fourcc, 20.0, (w, h))
+video_filename = os.path.join(student_folder, f"{student_name}_{timestamp}_video.mp4")
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+video_writer = cv2.VideoWriter(video_filename, fourcc, 20.0, (frame_width, frame_height))
 
 # Create a log file for the student
 log_file_path = os.path.join(student_folder, f"{student_name}_{timestamp}_log.txt")
+
 
 def show_notification(title, message):
     notification.notify(
@@ -72,6 +71,8 @@ def show_notification(title, message):
         app_icon=None,  # e.g., 'C:\\icon_32x32.ico'
         timeout=10,  # seconds
     )
+
+
 def on_key_release(key):
     global keystroke_count
     keystroke_count += 1
@@ -80,6 +81,8 @@ def on_key_release(key):
 def on_move(x, y):
     global mouse_movement_count
     mouse_movement_count += 1
+
+
 def check_browser_activity():
     global keystroke_count, mouse_movement_count
     while True:
@@ -87,7 +90,7 @@ def check_browser_activity():
         if active_window_title != browser_title:
             event = f"Unusual application accessed: {active_window_title}"
             print(event)
-            show_notification("Unusual application accessed","Please Go back on your exam page")
+            show_notification("Unusual application accessed", "Please Go back on your exam page")
             with open(log_file_path, "a") as log_file:
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 log_file.write(f"{timestamp} - {event}\n")
@@ -96,7 +99,8 @@ def check_browser_activity():
             if keystroke_count > activity_threshold:
                 event = "Unusual keyboard activity detected outside the browser."
                 print(event)
-                show_notification("Unusual keyboard activity detected outside the browser", "Please Go back on your exam page")
+                show_notification("Unusual keyboard activity detected outside the browser",
+                                  "Please Go back on your exam page")
 
                 with open(log_file_path, "a") as log_file:
                     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -113,6 +117,7 @@ def check_browser_activity():
 
         time.sleep(1)  # Reduce the polling frequency
 
+
 # Define a function to capture screenshots
 def capture_screenshot():
     while True:
@@ -128,11 +133,13 @@ def capture_screenshot():
             screenshot.save(file_path)
         time.sleep(1)  # Reduce the polling frequency
 
-# ... (The rest of your code for gaze tracking and webcam capture)
+
 def get_active_window_title():
     active_window = win32gui.GetForegroundWindow()
     window_title = win32gui.GetWindowText(active_window)
     return window_title
+
+
 # Initialize the listener for mouse and keyboard events
 keyboard_listener = keyboard.Listener(on_release=on_key_release)
 mouse_listener = mouse.Listener(on_move=on_move)
@@ -151,6 +158,8 @@ activity_thread.start()
 screenshot_thread.start()
 
 exit_flag = False  # Initialize the exit flag
+
+
 def upload_files_to_firebase(local_path, bucket, student_name):
     start_time = time.time()
     file_count = 0
@@ -175,6 +184,7 @@ def upload_files_to_firebase(local_path, bucket, student_name):
     upload_time = end_time - start_time
     print(f"Uploaded {file_count} files in {upload_time:.2f} seconds.")
 
+
 def create_student_record(student_name, student_folder):
     student_data = {
         'name': student_name,
@@ -188,11 +198,10 @@ def create_student_record(student_name, student_folder):
     # Access Firebase Storage to get the URLs of files for the particular student
     bucket = storage.bucket()
     blobs = bucket.list_blobs(prefix=f"students/{student_name}/")
-
     for blob in blobs:
         if blob.name.endswith('.png'):
             student_data['screenshot_urls'].append(blob.public_url)
-        elif blob.name.endswith('.avi'):
+        elif blob.name.endswith('.mp4'):
             student_data['video_url'] = blob.public_url
         elif blob.name.endswith('_log.txt'):
             student_data['log_url'] = blob.public_url
@@ -200,6 +209,7 @@ def create_student_record(student_name, student_folder):
     # Create the Firestore record for the student
     students_ref = db.collection('students')
     students_ref.add(student_data)
+
 
 # Register a listener for Ctrl+C or q to safely exit
 def on_key_press(key):
@@ -209,6 +219,7 @@ def on_key_press(key):
             exit_flag = True
     except AttributeError:
         pass
+
 
 # Initialize the listener for Ctrl+C or q
 keyboard_listener_exit = keyboard.Listener(on_press=on_key_press)
@@ -233,8 +244,10 @@ while True:
             print("Looked away from the screen")
     else:
         landmarks = predictor(gray, faces[0])
-        left_eye = np.array([(landmarks.part(36).x + landmarks.part(37).x) / 2, (landmarks.part(36).y + landmarks.part(37).y) / 2])
-        right_eye = np.array([(landmarks.part(42).x + landmarks.part(43).x) / 2, (landmarks.part(42).y + landmarks.part(43).y) / 2])
+        left_eye = np.array(
+            [(landmarks.part(36).x + landmarks.part(37).x) / 2, (landmarks.part(36).y + landmarks.part(37).y) / 2])
+        right_eye = np.array(
+            [(landmarks.part(42).x + landmarks.part(43).x) / 2, (landmarks.part(42).y + landmarks.part(43).y) / 2])
         screen_center = np.array([frame.shape[1] // 2, frame.shape[0] // 2])
         eye_distance = np.linalg.norm(screen_center - ((left_eye + right_eye) / 2))
 
@@ -260,16 +273,11 @@ while True:
                         # Overlay the timestamp on the frame
                         frame = cv2.putText(frame, event, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-                        # Add the frame to the video
-                        video_writer.write(frame)
-    video_frame = cv2.resize(frame, (video_feed_width, video_feed_height))
-
     # Display the video feed in the window
-    cv2.imshow("Video Feed", video_frame)
+    cv2.imshow("Video Feed", frame)
 
     # Write the video frame to the output video file
-    video_writer.write(video_frame)
-
+    video_writer.write(frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         exit_flag = True
@@ -277,12 +285,19 @@ while True:
 # Release the video writer
 video_writer.release()
 
+# Wait for threads to finish
+# activity_thread.join()
+# screenshot_thread.join()
+
+# Add a delay before exiting to allow threads to finish
+time.sleep(2)
+
 cap.release()
 cv2.destroyAllWindows()
-if __name__ == "__main__":
-    # Set the path to the folder created during the program
-    local_folder_path = student_folder
 
-    bucket = storage.bucket()
-    upload_files_to_firebase(local_folder_path, bucket, student_name)
-    create_student_record(student_name, student_folder)
+# After releasing the video and saving it, upload data to Firebase
+local_folder_path = student_folder
+
+bucket = storage.bucket()
+upload_files_to_firebase(local_folder_path, bucket, student_name)
+create_student_record(student_name, student_folder)
