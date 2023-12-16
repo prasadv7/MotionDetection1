@@ -1,10 +1,8 @@
 import subprocess
-
 import cv2
 import dlib
 import numpy as np
 import time
-
 import pymsgbox
 from PIL import ImageGrab
 from pynput import mouse, keyboard
@@ -61,6 +59,7 @@ chrome_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"  # Up
 
 # Open the URL in Chrome
 subprocess.run([chrome_path, launch_url])
+subprocess.run(["timeout", "/t", "4"], shell=True)
 # Create a folder for the student with timestamp if it doesn't exist
 timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 student_folder = os.path.join(screenshot_path, f"{student_name}_{timestamp}")
@@ -133,7 +132,8 @@ def check_browser_activity():
                 if duration >= 3:  # Check if the duration is more than 3 seconds
                     print(f"Exiting program: Unusual application accessed for {duration:.2f} seconds.")
                     show_warning_message("WARNING: Exam Terminating! You looked away for more than 10 seconds.")
-                    exit_flag = True  # Set the exit_flag to exit the main loop
+                    exit_flag = True
+                    kill_chrome()# Set the exit_flag to exit the main loop
             with open(log_file_path, "a") as log_file:
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 log_file.write(f"{timestamp} - {event}\n")
@@ -159,7 +159,6 @@ def check_browser_activity():
                 mouse_movement_count = 0
 
         time.sleep(1)  # Reduce the polling frequency
-
 
 # Define a function to capture screenshots
 def capture_screenshot():
@@ -281,7 +280,8 @@ exam_termination_thread = threading.Thread(target=check_exam_termination)
 activity_thread.daemon = True
 screenshot_thread.daemon = True
 exam_termination_thread.daemon = True
-
+activity_thread.start()
+screenshot_thread.start()
 exam_termination_thread.start()
 
 root = tk.Tk()
@@ -302,7 +302,6 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
-
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = detector(gray)
 
